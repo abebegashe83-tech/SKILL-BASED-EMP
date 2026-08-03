@@ -1,18 +1,22 @@
-# Virtual environments
+# Python
 venv/
 .venv/
-
-# Environment variables
-.env
-
-# Python
 __pycache__/
 *.py[cod]
+*.sqlite3
+.env
 
-# Django
-db.sqlite3
-media/
-staticfiles/
+# Node
+node_modules/
+next-frontend/node_modules/
+
+# Next.js
+.next/
+out/
+
+# Build
+dist/
+build/
 
 # VS Code
 .vscode/
