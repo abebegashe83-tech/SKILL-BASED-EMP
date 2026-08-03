@@ -1,0 +1,61 @@
+Performing system checks...
+
+System check identified no issues (0 silenced).
+Traceback (most recent call last):
+  File "C:\Users\hp\AppData\Roaming\Python\Python314\site-packages\django\utils\module_loading.py", line 30, in import_string
+    return cached_import(module_path, class_name)
+  File "C:\Users\hp\AppData\Roaming\Python\Python314\site-packages\django\utils\module_loading.py", line 16, in cached_import
+    return getattr(module, class_name)
+AttributeError: module 'core.wsgi' has no attribute 'application'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\hp\AppData\Roaming\Python\Python314\site-packages\django\core\servers\basehttp.py", line 48, in get_internal_wsgi_application
+    return import_string(app_path)
+  File "C:\Users\hp\AppData\Roaming\Python\Python314\site-packages\django\utils\module_loading.py", line 32, in import_string
+    raise ImportError(
+    ...<2 lines>...
+    ) from err
+ImportError: Module "core.wsgi" does not define a "application" attribute/class
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\hp\Downloads\SKILL-BASED-EMP\backend\manage.py", line 20, in <module>
+    main()
+    ~~~~^^
+  File "C:\Users\hp\Downloads\SKILL-BASED-EMP\backend\manage.py", line 17, in main
+    execute_from_command_line(sys.argv)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^
+  File "C:\Users\hp\AppData\Roaming\Python\Python314\site-packages\django\core\management\__init__.py", line 442, in execute_from_command_line
+    utility.execute()
+    ~~~~~~~~~~~~~~~^^
+  File "C:\Users\hp\AppData\Roaming\Python\Python314\site-packages\django\core\management\__init__.py", line 436, in execute
+    self.fetch_command(subcommand).run_from_argv(self.argv)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^
+  File "C:\Users\hp\AppData\Roaming\Python\Python314\site-packages\django\core\management\base.py", line 412, in run_from_argv
+    self.execute(*args, **cmd_options)
+    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\hp\AppData\Roaming\Python\Python314\site-packages\django\core\management\commands\runserver.py", line 74, in execute
+    super().execute(*args, **options)
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "C:\Users\hp\AppData\Roaming\Python\Python314\site-packages\django\core\management\base.py", line 458, in execute
+    output = self.handle(*args, **options)
+  File "C:\Users\hp\AppData\Roaming\Python\Python314\site-packages\django\core\management\commands\runserver.py", line 111, in handle
+    self.run(**options)
+    ~~~~~~~~^^^^^^^^^^^
+  File "C:\Users\hp\AppData\Roaming\Python\Python314\site-packages\django\core\management\commands\runserver.py", line 120, in run
+    self.inner_run(None, **options)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\hp\AppData\Roaming\Python\Python314\site-packages\django\core\management\commands\runserver.py", line 139, in inner_run
+    handler = self.get_handler(*args, **options)
+  File "C:\Users\hp\AppData\Roaming\Python\Python314\site-packages\django\contrib\staticfiles\management\commands\runserver.py", line 31, in get_handler
+    handler = super().get_handler(*args, **options)
+  File "C:\Users\hp\AppData\Roaming\Python\Python314\site-packages\django\core\management\commands\runserver.py", line 78, in get_handler
+    return get_internal_wsgi_application()
+  File "C:\Users\hp\AppData\Roaming\Python\Python314\site-packages\django\core\servers\basehttp.py", line 50, in get_internal_wsgi_application
+    raise ImproperlyConfigured(
+    ...<2 lines>...
+    ) from err
+django.core.exceptions.ImproperlyConfigured: WSGI application 'core.wsgi.application' could not be loaded; Error importing module.

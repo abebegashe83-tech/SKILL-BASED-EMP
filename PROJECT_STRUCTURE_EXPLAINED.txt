@@ -1,0 +1,90 @@
+SKILL-BASED EMPLOYMENT PLATFORM - PROJECT STRUCTURE EXPLAINED
+
+================================================================================
+ROOT LEVEL FILES AND FOLDERS
+================================================================================
+
+1. .gitignore
+   Purpose: Tells Git which files/folders to ignore (not track)
+   Contains: node_modules, .env, __pycache__, .venv, etc.
+
+2. docker-compose.yml
+   Purpose: Configuration for running multiple services (backend, frontend, AI, database) in Docker containers
+   Defines: Services, ports, environment variables, volumes
+
+3. package.json & package-lock.json
+   Purpose: Node.js project configuration and dependencies
+   Contains: Project metadata, scripts, npm packages
+
+4. README.md
+   Purpose: Main project documentation
+   Contains: Project overview, setup instructions, API documentation
+
+5. create_structure.ps1
+   Purpose: PowerShell script to create project folder structure
+   Used: For initial project setup
+
+6. prisma.config.ts
+   Purpose: Prisma ORM configuration (if used)
+   Contains: Database schema and connection settings
+
+
+================================================================================
+BACKEND FOLDER (Django REST API)
+================================================================================
+
+backend/
+Purpose: Main server application handling all business logic and database operations
+Technology: Python, Django, Django REST Framework, PostgreSQL
+Port: 8000
+
+
+
+BACKEND SUBFOLDERS:
+
+1. backend/core/
+   Purpose: Core Django project settings and configuration
+   
+   Files:
+   - settings.py: Main configuration (database, installed apps, middleware, CORS, JWT)
+   - urls.py: Main URL routing (connects all app URLs)
+   - wsgi.py: WSGI configuration for deployment
+   - asgi.py: ASGI configuration for async support
+
+2. backend/apps/
+   Purpose: Contains all Django applications (features)
+   
+   2.1 backend/apps/users/
+       Purpose: User management, authentication, profiles
+       
+       Files:
+       - models.py: User, Profile, JobseekerProfile, EmployerProfile, PasswordResetOTP models
+       - views.py: Register, Login, Profile update, Password reset, CV upload
+       - serializers.py: Data validation and transformation for API
+       - urls.py: URL routing for user endpoints
+       - admin.py: Django admin panel configuration
+       - apps.py: App configuration
+       
+       Subfolders:
+       - migrations/: Database schema changes history
+       
+   2.2 backend/apps/jobs/
+       Purpose: Job posting management
+       
+       Files:
+       - models.py: Job model (title, description, required_skills, salary, location)
+       - views.py: Create job, list jobs, update job, delete job, get applicants
+       - serializers.py: Job data validation
+       - urls.py: Job-related endpoints
+       - admin.py: Job admin interface
+       
+   2.3 backend/apps/applications/
+       Purpose: Job application management
+       
+       Files:
+       - models.py: Application model (user, job, status, interview details)
+       - views.py: Apply to job, view applications, update status, accept/reject
+       - serializers.py: Application data validation
+       - urls.py: Application endpoints
+       - admin.py: Application admin interface
+       
