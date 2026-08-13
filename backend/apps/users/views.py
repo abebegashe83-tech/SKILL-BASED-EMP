@@ -12,6 +12,7 @@ from django.conf import settings
 from .serializers import RegisterSerializer, LoginSerializer, ProfileUpdateSerializer, UserSerializer, GenerateOTPSerializer, VerifyOTPResetSerializer, ProfileSerializer
 from .models import PasswordResetOTP, Profile, JobseekerProfile
 from apps.jobs.models import Job
+from services.sms_service import sms_service
 
 User = get_user_model()
 logger = logging.getLogger(__name__)
@@ -188,6 +189,7 @@ class GenerateOTPView(generics.GenericAPIView):
             print(f"[GENERATE OTP] Email subject: {subject}", flush=True)
             print(f"[GENERATE OTP] Email body:\n{body}", flush=True)
 
+            email_sent = False
             try:
                 sent_count = send_mail(
                     subject=subject,
@@ -197,25 +199,40 @@ class GenerateOTPView(generics.GenericAPIView):
                     fail_silently=False,
                 )
                 print(f"[GENERATE OTP] send_mail sent_count: {sent_count}", flush=True)
-
-                if not sent_count:
-                    print(f"[GENERATE OTP] Email not sent, but OTP generated: {reset_otp.otp}", flush=True)
-                    return Response({
-                        'success': True,
-                        'message': 'OTP generated. Email delivery may be delayed.'
-                    }, status=status.HTTP_200_OK)
+                email_sent = sent_count > 0
             except Exception as email_err:
                 print(f"[GENERATE OTP] Email sending error: {str(email_err)}", flush=True)
-                print(f"[GENERATE OTP] OTP was generated: {reset_otp.otp}", flush=True)
-                return Response({
-                    'success': True,
-                    'message': 'OTP generated. Email delivery failed, please check your spam folder.'
-                }, status=status.HTTP_200_OK)
+
+            # Send OTP via SMS if user has phone number
+            sms_sent = False
+            try:
+                # Get user's phone number from profile
+                if hasattr(user, 'profile') and user.profile.phone:
+                    phone_number = user.profile.phone
+                    sms_message = f"Your SkillMatch password reset OTP is: {reset_otp.otp}. Valid for 10 minutes."
+                    sms_sent = sms_service.send_sms(phone_number, sms_message)
+                    print(f"[GENERATE OTP] SMS sent to {phone_number}: {sms_sent}", flush=True)
+                else:
+                    print(f"[GENERATE OTP] No phone number found for user", flush=True)
+            except Exception as sms_err:
+                print(f"[GENERATE OTP] SMS sending error: {str(sms_err)}", flush=True)
+
+            # Determine response message based on what was sent
+            if email_sent and sms_sent:
+                message = 'OTP sent successfully to your email and phone.'
+            elif email_sent:
+                message = 'OTP sent successfully to your email.'
+            elif sms_sent:
+                message = 'OTP sent successfully to your phone.'
+            else:
+                message = 'OTP generated. Delivery may be delayed, please check your spam folder.'
 
             print("[GENERATE OTP] ===== SUCCESS =====", flush=True)
             return Response({
                 'success': True,
-                'message': 'OTP sent successfully to your email.'
+                'message': message,
+                'email_sent': email_sent,
+                'sms_sent': sms_sent
             }, status=status.HTTP_200_OK)
 
         except ValidationError as val_err:
@@ -283,6 +300,46 @@ class VerifyOTPResetView(generics.GenericAPIView):
                 'success': False,
                 'message': 'Failed to reset password. Please try again.'
             }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+class SkillSuggestionsView(APIView):
+    """
+    Provides skill suggestions based on partial input using the SKILL_MAP.
+    """
+    permission_classes = (AllowAny,)
+
+    def get(self, request):
+        from services.recommendation_service import SKILL_MAP
+        
+        query = request.query_params.get('q', '').lower().strip()
+        
+        if not query or len(query) < 2:
+            return Response({"suggestions": []}, status=status.HTTP_200_OK)
+        
+        # Get all skills from SKILL_MAP
+        all_skills = set(SKILL_MAP.keys())
+        
+        # Add related skills to the pool
+        for related_skills in SKILL_MAP.values():
+            all_skills.update(related_skills)
+        
+        # Filter skills that start with or contain the query
+        suggestions = [
+            skill.capitalize() for skill in all_skills
+            if query in skill.lower()
+        ]
+        
+        # Sort by relevance (exact match first, then starts with, then contains)
+        suggestions.sort(key=lambda x: (
+            0 if x.lower() == query else 1 if x.lower().startswith(query) else 2,
+            len(x),
+            x.lower()
+        ))
+        
+        # Limit to 15 suggestions
+        suggestions = suggestions[:15]
+        
+        return Response({"suggestions": suggestions}, status=status.HTTP_200_OK)
+
+
 class JobseekerSkillInsightView(APIView):
     """
     Analyzes user skills against market demand (active jobs) to provide insights.

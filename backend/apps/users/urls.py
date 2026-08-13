@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import RegisterView, LoginView, ProfileView, GenerateOTPView, VerifyOTPResetView, UserProfileView, AuthUserView, JobseekerSkillInsightView, UploadCVView
+from .views import RegisterView, LoginView, ProfileView, GenerateOTPView, VerifyOTPResetView, UserProfileView, AuthUserView, JobseekerSkillInsightView, UploadCVView, SkillSuggestionsView
 
 urlpatterns = [
     path('auth/register/', RegisterView.as_view(), name='register'),
@@ -11,4 +11,5 @@ urlpatterns = [
     path('profile/', ProfileView.as_view(), name='profile'),
     path('profile/new/', UserProfileView.as_view(), name='user-profile'),
     path('profile/skill-insights/', JobseekerSkillInsightView.as_view(), name='skill-insights'),
+    path('skills/suggestions/', SkillSuggestionsView.as_view(), name='skill-suggestions'),
 ]
