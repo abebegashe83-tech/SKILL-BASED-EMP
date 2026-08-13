@@ -16,6 +16,9 @@ if os.environ.get('ALLOWED_HOSTS'):
 # Add Railway domain automatically
 if os.environ.get('RAILWAY_PUBLIC_DOMAIN'):
     ALLOWED_HOSTS.append(os.environ['RAILWAY_PUBLIC_DOMAIN'])
+# Add Render domain automatically
+if os.environ.get('RENDER_EXTERNAL_HOSTNAME'):
+    ALLOWED_HOSTS.append(os.environ['RENDER_EXTERNAL_HOSTNAME'])
 
 INSTALLED_APPS = [
     'jazzmin',
@@ -145,6 +148,11 @@ CORS_ALLOWED_ORIGINS = [
 RAILWAY_FRONTEND_URL = os.environ.get('RAILWAY_FRONTEND_URL', '')
 if RAILWAY_FRONTEND_URL and RAILWAY_FRONTEND_URL not in CORS_ALLOWED_ORIGINS:
     CORS_ALLOWED_ORIGINS.append(RAILWAY_FRONTEND_URL)
+
+# Add Render/Vercel frontend URL to CORS
+VERCEL_FRONTEND_URL = os.environ.get('VERCEL_FRONTEND_URL', '')
+if VERCEL_FRONTEND_URL and VERCEL_FRONTEND_URL not in CORS_ALLOWED_ORIGINS:
+    CORS_ALLOWED_ORIGINS.append(VERCEL_FRONTEND_URL)
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOW_ALL_ORIGINS = DEBUG  # Allow all origins in development
 CORS_ALLOW_HEADERS = [
